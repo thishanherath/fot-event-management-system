@@ -39,8 +39,8 @@ public class Event {
 
     @ManyToOne
     @JoinColumn(name = "created_by")
-    private User user;
+    private User createdBy;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Registration> registrations;
 }
