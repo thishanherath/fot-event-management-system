@@ -4,6 +4,7 @@ import com.ictec.eventmanagementsytem.dto.EventRequest;
 import com.ictec.eventmanagementsytem.entity.Event;
 import com.ictec.eventmanagementsytem.service.EventService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,5 +36,11 @@ public class EventController {
     public String deleteEventById(@PathVariable long id) {
         eventService.deleteEventById(id);
         return "Event deleted successfully";
+    }
+
+    @PutMapping("/{id}/approve")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Event approveEvent(@PathVariable Long id) {
+        return eventService.approveEvent(id);
     }
 }

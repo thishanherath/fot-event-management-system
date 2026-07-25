@@ -44,4 +44,16 @@ public class EventService {
         Event event = getEventById(id);
         eventRepository.delete(event);
     }
+
+    public Event approveEvent(Long id) {
+        Event event = eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Event not found"));
+        event.setStatus(EventStatus.APPROVED);
+        return eventRepository.save(event);
+    }
+
+    public Event rejectEvent(Long id) {
+        Event event = eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Event not found"));
+        event.setStatus(EventStatus.REJECTED);
+        return eventRepository.save(event);
+    }
 }

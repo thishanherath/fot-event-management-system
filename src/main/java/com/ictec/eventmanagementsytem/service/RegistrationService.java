@@ -1,0 +1,71 @@
+package com.ictec.eventmanagementsytem.service;
+
+import com.ictec.eventmanagementsytem.entity.*;
+import com.ictec.eventmanagementsytem.repository.*;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class RegistrationService {
+
+    private final RegistrationRepository registrationRepository;
+    private final EventRepository eventRepository;
+    private final UserRepository userRepository;
+
+    public Registration registerForEvent(Long eventId, String email) {
+
+        User student = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
+
+        if (event.getStatus() != EventStatus.APPROVED) {
+            throw new RuntimeException(
+                    "This event is not approved"
+            );
+        }
+
+        boolean alreadyRegistered = registrationRepository.existsByStudentIdAndEventId(student.getId(), eventId);
+
+        if (alreadyRegistered) {
+            throw new RuntimeException(
+                    "Already registered for this event"
+            );
+        }
+
+        long currentRegistrations = registrationRepository.findByEventId(eventId).size();
+
+        if (currentRegistrations >= event.getCapacity()) {
+            throw new RuntimeException(
+                    "Event capacity reached"
+            );
+        }
+
+        Registration registration = new Registration();
+
+        registration.setStudent(student);
+
+        registration.setEvent(event);
+
+        registration.setRegisteredAt(LocalDateTime.now());
+
+        return registrationRepository.save(registration);
+    }
+
+    public List<Registration> getMyRegistrations(String email) {
+
+        User student = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        return registrationRepository.findByStudentId(student.getId());
+    }
+
+    public List<Registration> getEventParticipants(Long eventId) {
+
+        return registrationRepository.findByEventId(eventId);
+    }
+
+}
