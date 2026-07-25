@@ -1,12 +1,17 @@
 package com.ictec.eventmanagementsytem.dto;
-import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
+@Data
 public class LoginRequest {
+
+    @Email
+    @NotBlank
     private String email;
+
+    @NotBlank
     private String password;
+
 }

@@ -38,6 +38,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = header.substring(7);
 
+        if (!jwtService.isTokenValid(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String email = jwtService.extractEmail(token);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);

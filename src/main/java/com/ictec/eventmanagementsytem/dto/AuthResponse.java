@@ -1,11 +1,18 @@
 package com.ictec.eventmanagementsytem.dto;
-import lombok.*;
 
-@Getter
-@Setter
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
 @AllArgsConstructor
-@NoArgsConstructor
-
 public class AuthResponse {
+
     private String token;
+
+    private String name;
+
+    private String email;
+
+    private String role;
+
 }
