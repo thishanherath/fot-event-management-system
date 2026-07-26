@@ -1,5 +1,6 @@
 package com.ictec.eventmanagementsytem.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,10 +24,12 @@ public class Registration {
 
     @ManyToOne
     @JoinColumn(name = "student_id")
+    @JsonIgnoreProperties({"events", "password"})
     private User student;
 
     @ManyToOne
     @JoinColumn(name = "event_id")
+    @JsonIgnoreProperties({"registrations"})
     private Event event;
 
     private LocalDateTime registeredAt;

@@ -1,5 +1,6 @@
 package com.ictec.eventmanagementsytem.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,6 +40,7 @@ public class Event {
 
     @ManyToOne
     @JoinColumn(name = "created_by")
+    @JsonIgnoreProperties({"events", "password"})
     private User createdBy;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL,orphanRemoval = true)

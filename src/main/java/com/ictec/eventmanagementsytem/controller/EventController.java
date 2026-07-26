@@ -1,5 +1,6 @@
 package com.ictec.eventmanagementsytem.controller;
 
+import com.ictec.eventmanagementsytem.dto.DashboardStats;
 import com.ictec.eventmanagementsytem.dto.EventRequest;
 import com.ictec.eventmanagementsytem.entity.Event;
 import com.ictec.eventmanagementsytem.service.EventService;
@@ -17,6 +18,7 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
 
+    @PreAuthorize("hasRole('ORGANIZER')")
     @PostMapping
     public Event createEvent(@RequestBody EventRequest request, Authentication authentication) {
         return eventService.createEvent(request, authentication.getName());
@@ -32,6 +34,7 @@ public class EventController {
         return eventService.getEventById(id);
     }
 
+    @PreAuthorize("hasRole('ORGANIZER')")
     @DeleteMapping("/{id}")
     public String deleteEventById(@PathVariable long id) {
         eventService.deleteEventById(id);
@@ -42,5 +45,22 @@ public class EventController {
     @PreAuthorize("hasRole('ADMIN')")
     public Event approveEvent(@PathVariable Long id) {
         return eventService.approveEvent(id);
+    }
+
+    @PreAuthorize("hasRole('ORGANIZER')")
+    @PutMapping("/{id}")
+    public Event updateEvent(@PathVariable Long id, @RequestBody EventRequest request, Authentication authentication) {
+        return eventService.updateEvent(id, request, authentication.getName());
+    }
+
+    @GetMapping("/my")
+    public List<Event> getMyEvents(Authentication authentication) {
+        return eventService.getMyEvents(authentication.getName());
+    }
+
+    @GetMapping("/dashboard/stats")
+    @PreAuthorize("hasRole('ADMIN')")
+    public DashboardStats getDashboardStats() {
+        return eventService.getDashboardStats();
     }
 }
