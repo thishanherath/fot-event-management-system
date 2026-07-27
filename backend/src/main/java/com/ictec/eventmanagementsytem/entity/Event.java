@@ -35,6 +35,9 @@ public class Event {
 
     private Integer capacity;
 
+    @Column(length = 1000)
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     private EventStatus status;
 

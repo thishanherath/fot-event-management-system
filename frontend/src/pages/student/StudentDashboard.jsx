@@ -27,7 +27,7 @@ function StudentDashboard() {
             setEvents(eventsRes.data || []);
             setMyRegistrations(regRes.data || []);
         } catch (err) {
-            setError("Failed to load university events.");
+            setError("Failed to load university event catalog.");
         } finally {
             setLoading(false);
         }
@@ -46,23 +46,23 @@ function StudentDashboard() {
         setSuccessMsg("");
         try {
             await registerForEvent(eventId);
-            setSuccessMsg("Successfully registered for the university event! Check 'My Registrations' tab.");
+            setSuccessMsg("Successfully enrolled in the university event! Visit 'My Registrations' to view your ticket.");
             fetchData();
         } catch (err) {
-            setError(err.response?.data?.message || "Could not register for this event. Event may be full or already registered.");
+            setError(err.response?.data?.message || "Could not register for this event. Event may be at full capacity or already registered.");
         }
     };
 
     const handleCancelReg = async (registrationId) => {
-        if (!window.confirm("Are you sure you want to cancel your registration for this event?")) return;
+        if (!window.confirm("Are you sure you want to cancel your seat registration for this academic event?")) return;
         setError("");
         setSuccessMsg("");
         try {
             await cancelRegistration(registrationId);
-            setSuccessMsg("Your event registration has been cancelled.");
+            setSuccessMsg("Your event reservation has been cancelled.");
             fetchData();
         } catch (err) {
-            setError("Failed to cancel registration.");
+            setError("Failed to cancel reservation.");
         }
     };
 
@@ -82,37 +82,37 @@ function StudentDashboard() {
     });
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+        <div className="min-h-screen bg-[#F4F6F9] text-gray-900 flex flex-col font-sans">
             <Navbar activeTab={activeTab} onSelectTab={setActiveTab} />
 
-            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Hero Banner */}
-                <div className="bg-gradient-to-r from-indigo-900/60 via-purple-900/40 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 sm:p-8 mb-8 shadow-xl">
-                    <div className="max-w-2xl">
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                            FOT University Student Portal
-                        </span>
-                        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-3">
-                            Welcome back, {user?.name || "Student"}!
+            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8">
+                {/* Academic Institutional Hero Banner */}
+                <div className="bg-gradient-to-r from-[#6B1D1D] via-[#571515] to-[#4C1414] text-white border-b-4 border-[#EAA91D] rounded-xl p-8 mb-8 shadow-md relative overflow-hidden">
+                    <div className="max-w-3xl relative z-10">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#EAA91D] text-[#4C1414] font-extrabold text-xs uppercase tracking-wider mb-3">
+                            <span>★ UNIVERSITY OF RUHUNA — FOT</span>
+                        </div>
+                        <h1 className="text-2xl sm:text-4xl font-black tracking-tight font-serif uppercase">
+                            Welcome, {user?.name || "Student"}
                         </h1>
-                        <p className="text-slate-300 text-sm mt-2 leading-relaxed">
-                            Explore upcoming university seminars, symposia, and workshops. As an enrolled student registered by university administration, you can reserve your seat instantly.
+                        <p className="text-gray-200 text-sm sm:text-base mt-2 leading-relaxed font-medium">
+                            Browse upcoming academic symposia, inter-faculty hackathons, and career workshops. Your account is officially verified by the University Administration.
                         </p>
                     </div>
                 </div>
 
                 {/* Alerts */}
                 {error && (
-                    <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-sm flex items-center justify-between">
+                    <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-700 rounded-r text-red-800 text-sm flex items-center justify-between shadow-sm">
                         <span>{error}</span>
-                        <button onClick={() => setError("")} className="text-rose-400 hover:text-white">✕</button>
+                        <button onClick={() => setError("")} className="font-bold">✕</button>
                     </div>
                 )}
 
                 {successMsg && (
-                    <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-300 text-sm flex items-center justify-between">
+                    <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-700 rounded-r text-green-800 text-sm flex items-center justify-between shadow-sm">
                         <span>{successMsg}</span>
-                        <button onClick={() => setSuccessMsg("")} className="text-emerald-400 hover:text-white">✕</button>
+                        <button onClick={() => setSuccessMsg("")} className="font-bold">✕</button>
                     </div>
                 )}
 
@@ -120,10 +120,10 @@ function StudentDashboard() {
                 {activeTab === "available" && (
                     <div>
                         {/* Search & Filter Bar */}
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8 bg-slate-900/60 border border-slate-800/80 p-4 rounded-xl">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8 bg-white border border-gray-300 p-4 rounded-lg shadow-sm">
                             <div className="relative flex-1 max-w-md">
                                 <svg
-                                    className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500"
+                                    className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -135,7 +135,7 @@ function StudentDashboard() {
                                     placeholder="Search events by title, topic, or location..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full bg-slate-800/80 border border-slate-700 text-white rounded-lg pl-10 pr-4 py-2 text-sm outline-none focus:border-indigo-500 transition"
+                                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded pl-10 pr-4 py-2.5 text-sm outline-none focus:border-[#6B1D1D] transition"
                                 />
                             </div>
 
@@ -143,45 +143,45 @@ function StudentDashboard() {
                             <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
                                 <button
                                     onClick={() => setFilterStatus("all")}
-                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap ${
+                                    className={`px-4 py-2 rounded text-xs font-bold uppercase tracking-wider transition whitespace-nowrap ${
                                         filterStatus === "all"
-                                            ? "bg-indigo-600 text-white"
-                                            : "bg-slate-800 text-slate-400 hover:text-white"
+                                            ? "bg-[#6B1D1D] text-white shadow-sm"
+                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                     }`}
                                 >
                                     All Events ({availableEvents.length})
                                 </button>
                                 <button
                                     onClick={() => setFilterStatus("not_registered")}
-                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap ${
+                                    className={`px-4 py-2 rounded text-xs font-bold uppercase tracking-wider transition whitespace-nowrap ${
                                         filterStatus === "not_registered"
-                                            ? "bg-indigo-600 text-white"
-                                            : "bg-slate-800 text-slate-400 hover:text-white"
+                                            ? "bg-[#6B1D1D] text-white shadow-sm"
+                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                     }`}
                                 >
                                     Available to Register
                                 </button>
                                 <button
                                     onClick={() => setFilterStatus("registered")}
-                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap ${
+                                    className={`px-4 py-2 rounded text-xs font-bold uppercase tracking-wider transition whitespace-nowrap ${
                                         filterStatus === "registered"
-                                            ? "bg-indigo-600 text-white"
-                                            : "bg-slate-800 text-slate-400 hover:text-white"
+                                            ? "bg-[#6B1D1D] text-white shadow-sm"
+                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                     }`}
                                 >
-                                    Registered ({myRegistrations.length})
+                                    Enrolled ({myRegistrations.length})
                                 </button>
                             </div>
                         </div>
 
                         {/* Events Grid */}
                         {loading ? (
-                            <div className="py-16 text-center text-slate-500">
-                                Loading university event catalog...
+                            <div className="py-16 text-center text-gray-500 font-medium">
+                                Loading University of Ruhuna event catalog...
                             </div>
                         ) : filteredEvents.length === 0 ? (
-                            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-12 text-center text-slate-500">
-                                No university events matching your search criteria.
+                            <div className="bg-white border border-gray-300 rounded-lg p-12 text-center text-gray-500 font-medium">
+                                No campus events matching your search criteria.
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -208,18 +208,18 @@ function StudentDashboard() {
                 {/* MY REGISTRATIONS TAB */}
                 {activeTab === "my-registrations" && (
                     <div>
-                        <div className="mb-6">
-                            <h2 className="text-xl font-bold text-white">
-                                My Registered Events
+                        <div className="mb-6 border-l-4 border-[#6B1D1D] pl-4">
+                            <h2 className="text-xl sm:text-2xl font-black text-[#6B1D1D] font-serif uppercase">
+                                My Enrolled Campus Events
                             </h2>
-                            <p className="text-slate-400 text-sm mt-1">
-                                Events that you are currently enrolled to attend.
+                            <p className="text-gray-600 text-sm mt-1 font-medium">
+                                Academic events you have reserved seats to attend.
                             </p>
                         </div>
 
                         {myRegistrations.length === 0 ? (
-                            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-12 text-center text-slate-500">
-                                You haven't registered for any events yet. Check out the "Available Events" tab to reserve your seat!
+                            <div className="bg-white border border-gray-300 rounded-lg p-12 text-center text-gray-500 font-medium">
+                                You have not enrolled in any campus events yet. Visit the "Available Campus Events" tab to reserve your seat!
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -238,6 +238,13 @@ function StudentDashboard() {
                     </div>
                 )}
             </main>
+
+            {/* Institutional Footer */}
+            <footer className="bg-[#4C1414] text-white text-xs py-4 px-6 border-t border-[#EAA91D]/40 text-center mt-12">
+                <p className="font-medium">
+                    © 2026 University of Ruhuna, Sri Lanka — Faculty of Technology (FOT). Student Academic Portal.
+                </p>
+            </footer>
         </div>
     );
 }

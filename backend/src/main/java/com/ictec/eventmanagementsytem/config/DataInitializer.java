@@ -55,42 +55,46 @@ public class DataInitializer implements CommandLineRunner {
         // Initialize Sample Events if database is empty
         if (eventRepository.count() == 0) {
             Event event1 = new Event();
-            event1.setTitle("Annual FOT Tech Symposium 2026");
-            event1.setDescription("Join us for the premier Faculty of Technology symposium featuring guest talks on AI, IoT, and Cloud computing.");
-            event1.setLocation("Main Auditorium, FOT Campus");
+            event1.setTitle("University of Ruhuna - FOT Annual Research Symposium 2026");
+            event1.setDescription("The premier academic research symposium organized by the Faculty of Technology, University of Ruhuna featuring keynote addresses on AI, IoT, and Modern Engineering.");
+            event1.setLocation("Main Auditorium, FOT Campus - Ruhuna");
             event1.setEventDate(LocalDateTime.now().plusDays(10));
             event1.setCapacity(150);
             event1.setStatus(EventStatus.APPROVED);
+            event1.setImageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Lecture_hall_of_the_University_of_Helsinki.jpg/800px-Lecture_hall_of_the_University_of_Helsinki.jpg");
             event1.setCreatedBy(adminUser);
             eventRepository.save(event1);
 
             Event event2 = new Event();
-            event2.setTitle("AI & Machine Learning Bootcamp");
-            event2.setDescription("Hands-on practical workshop covering deep learning models and agentic AI systems.");
-            event2.setLocation("Computer Lab 3");
+            event2.setTitle("Faculty of Technology (FOT) - AI & IoT Industrial Workshop");
+            event2.setDescription("Hands-on practical workshop covering industrial automation, IoT sensor networks, and agentic AI systems for undergraduate students.");
+            event2.setLocation("Computer Lab 3, Department of ICT - Ruhuna");
             event2.setEventDate(LocalDateTime.now().plusDays(15));
             event2.setCapacity(50);
             event2.setStatus(EventStatus.APPROVED);
+            event2.setImageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Science_laboratory_%2827926131378%29.jpg/800px-Science_laboratory_%2827926131378%29.jpg");
             event2.setCreatedBy(adminUser);
             eventRepository.save(event2);
 
             Event event3 = new Event();
-            event3.setTitle("University Inter-Faculty Hackathon");
-            event3.setDescription("24-hour coding hackathon with exciting cash prizes and internship opportunities.");
-            event3.setLocation("Innovation Center");
+            event3.setTitle("Ruhuna University Inter-Faculty Coding Hackathon");
+            event3.setDescription("24-hour inter-faculty software development challenge with cash prizes and industrial internship opportunities.");
+            event3.setLocation("Innovation & Incubation Center - FOT");
             event3.setEventDate(LocalDateTime.now().plusDays(20));
             event3.setCapacity(100);
             event3.setStatus(EventStatus.APPROVED);
+            event3.setImageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/CERN_Server_03.jpg/800px-CERN_Server_03.jpg");
             event3.setCreatedBy(adminUser);
             eventRepository.save(event3);
 
             Event event4 = new Event();
-            event4.setTitle("Robotics & Drone Expo");
-            event4.setDescription("Showcase of student-built autonomous robotics and drone flight demonstrations.");
-            event4.setLocation("Open Courtyard");
+            event4.setTitle("FOT Career & Undergraduate Internship Fair 2026");
+            event4.setDescription("Annual university career fair connecting Technology undergraduates with leading IT and Engineering companies in Sri Lanka.");
+            event4.setLocation("University Courtyard & Exhibition Hall");
             event4.setEventDate(LocalDateTime.now().plusDays(25));
             event4.setCapacity(80);
             event4.setStatus(EventStatus.PENDING_APPROVAL);
+            event4.setImageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Robots-in-laboratory.jpg/800px-Robots-in-laboratory.jpg");
             event4.setCreatedBy(adminUser);
             eventRepository.save(event4);
         }

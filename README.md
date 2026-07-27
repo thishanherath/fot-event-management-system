@@ -1,10 +1,16 @@
-# Faculty of Technology (FOT) - University Event Management System (Role-Based Access Control)
+# Faculty of Technology (FOT) - University of Ruhuna Event Management System
 
-A complete, modern, full-stack Role-Based Event Management System built for the **Faculty of Technology (FOT) University**.
+A complete, modern, full-stack Role-Based Event Management System built for the **Faculty of Technology (FOT), University of Ruhuna** featuring an official institutional **Maroon (`#6B1D1D`) and Golden (`#EAA91D`) Academic Portal UI** inspired by Sri Lankan national university design standards.
 
 ---
 
-## 🌟 Architectural & Role-Based Design
+## 🌟 Architectural & Official University UI Design
+- **Prestigious University Aesthetic**: Clean, light-themed academic layout featuring official University of Ruhuna Maroon & Gold colors, institutional typography, emblem banners, and formal policy notifications.
+- **Production-Level Animated Homepage**: Modern interactive landing page with a live academic countdown timer, animated hero image carousel, real-time category filtering, official FOT Academic Department tracks (BST, ICT, ET, and DMS), and a live Campus Venue Agenda timeline.
+
+
+
+
 
 This system implements strict **Role-Based Access Control (RBAC)** tailored to university workflows:
 1. **University Administrator (`ADMIN`)**:
@@ -62,10 +68,48 @@ npm run dev
 
 ---
 
+## 🖼️ Guide: How to Add Your Own Custom Images to the Homepage Carousel
+
+The Homepage Hero Carousel is configured in [`frontend/src/pages/Home.jsx`](file:///h:/Dev%20peojects/Fot%20Event%20system/fot-event-management-system/frontend/src/pages/Home.jsx) via the `CAROUSEL_SLIDES` array. You can easily add or replace carousel slide images in two ways:
+
+### Option 1: Using Local Images from Your Computer (Recommended for Production)
+1. Copy your `.jpg` or `.png` image files into the **`frontend/src/assets/`** directory.
+   - Example: `frontend/src/assets/my-symposium.jpg`
+2. Open [`frontend/src/pages/Home.jsx`](file:///h:/Dev%20peojects/Fot%20Event%20system/fot-event-management-system/frontend/src/pages/Home.jsx) and **import** the image at the top of the file:
+   ```javascript
+   import mySymposiumImg from "../assets/my-symposium.jpg";
+   ```
+3. In the `CAROUSEL_SLIDES` array, assign your imported variable to the `image` field:
+   ```javascript
+   {
+       id: 1,
+       image: mySymposiumImg, // <-- Use imported local image
+       badge: "★ ANNUAL RESEARCH SYMPOSIUM 2026",
+       title: "Your Event Title Here",
+       ...
+   }
+   ```
+
+### Option 2: Using Web URLs (Direct Image Links)
+- You can simply paste any direct image URL as a string inside the `image` field:
+   ```javascript
+   {
+       id: 1,
+       image: "https://your-domain.com/path/to/image.jpg",
+       title: "Your Event Title Here",
+       ...
+   }
+   ```
+
+---
+
+
 ## 📁 Key Files Implemented / Updated
 - [AdminController.java](file:///h:/Dev%20peojects/Fot%20Event%20system/fot-event-management-system/backend/src/main/java/com/ictec/eventmanagementsytem/controller/AdminController.java) & [AdminService.java](file:///h:/Dev%20peojects/Fot%20Event%20system/fot-event-management-system/backend/src/main/java/com/ictec/eventmanagementsytem/service/AdminService.java) - Admin APIs for registering and managing students.
 - [DataInitializer.java](file:///h:/Dev%20peojects/Fot%20Event%20system/fot-event-management-system/backend/src/main/java/com/ictec/eventmanagementsytem/config/DataInitializer.java) - Automatic startup seeding of Admin account, Student accounts, and sample events.
+- [Home.jsx](file:///h:/Dev%20peojects/Fot%20Event%20system/fot-event-management-system/frontend/src/pages/Home.jsx) - Official University of Ruhuna institutional landing page showcasing public campus events and administrative policy notices.
 - [Login.jsx](file:///h:/Dev%20peojects/Fot%20Event%20system/fot-event-management-system/frontend/src/pages/auth/Login.jsx) - Role-based authentication and redirection page.
 - [AdminDashboard.jsx](file:///h:/Dev%20peojects/Fot%20Event%20system/fot-event-management-system/frontend/src/pages/admin/AdminDashboard.jsx) - Admin Portal for student registration, directory management, and event approvals.
 - [StudentDashboard.jsx](file:///h:/Dev%20peojects/Fot%20Event%20system/fot-event-management-system/frontend/src/pages/student/StudentDashboard.jsx) - Student Portal for browsing approved events and managing reservations.
 - [AppRoutes.jsx](file:///h:/Dev%20peojects/Fot%20Event%20system/fot-event-management-system/frontend/src/routes/AppRoutes.jsx) - RBAC route guard and automatic role redirects.
+

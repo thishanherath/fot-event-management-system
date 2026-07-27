@@ -27,6 +27,7 @@ function AdminDashboard() {
     const [eventLocation, setEventLocation] = useState("");
     const [eventDate, setEventDate] = useState("");
     const [eventCapacity, setEventCapacity] = useState(100);
+    const [eventImageUrl, setEventImageUrl] = useState("");
     const [creatingEvent, setCreatingEvent] = useState(false);
 
     const fetchData = async () => {
@@ -42,7 +43,7 @@ function AdminDashboard() {
             setEvents(eventsRes.data || []);
             setStats(statsRes.data || null);
         } catch (err) {
-            setError("Failed to load admin dashboard data.");
+            setError("Failed to load official administrative data.");
         } finally {
             setLoading(false);
         }
@@ -70,20 +71,20 @@ function AdminDashboard() {
             setShowStudentModal(false);
             fetchData();
         } catch (err) {
-            setError(err.response?.data?.message || "Error registering student. Email may already exist.");
+            setError(err.response?.data?.message || "Error registering student account. Email may already exist.");
         } finally {
             setRegistering(false);
         }
     };
 
     const handleDeleteStudent = async (id, name) => {
-        if (!window.confirm(`Are you sure you want to remove student ${name}?`)) return;
+        if (!window.confirm(`Are you sure you want to remove student account for ${name}?`)) return;
         try {
             await deleteStudent(id);
-            setSuccessMsg(`Removed student ${name}`);
+            setSuccessMsg(`Removed student account: ${name}`);
             fetchData();
         } catch (err) {
-            setError(err.response?.data?.message || "Failed to delete student.");
+            setError(err.response?.data?.message || "Failed to delete student account.");
         }
     };
 
@@ -97,17 +98,19 @@ function AdminDashboard() {
                 description: eventDesc,
                 location: eventLocation,
                 eventDate: eventDate ? new Date(eventDate).toISOString() : null,
-                capacity: Number(eventCapacity)
+                capacity: Number(eventCapacity),
+                imageUrl: eventImageUrl || "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Lecture_hall_of_the_University_of_Helsinki.jpg/800px-Lecture_hall_of_the_University_of_Helsinki.jpg"
             });
             setSuccessMsg("University event created successfully!");
             setEventTitle("");
             setEventDesc("");
             setEventLocation("");
             setEventDate("");
+            setEventImageUrl("");
             setShowEventModal(false);
             fetchData();
         } catch (err) {
-            setError("Failed to create event.");
+            setError("Failed to create campus event.");
         } finally {
             setCreatingEvent(false);
         }
@@ -116,7 +119,7 @@ function AdminDashboard() {
     const handleApproveEvent = async (id) => {
         try {
             await approveEvent(id);
-            setSuccessMsg("Event approved!");
+            setSuccessMsg("University event approved and published!");
             fetchData();
         } catch (err) {
             setError("Failed to approve event.");
@@ -127,7 +130,7 @@ function AdminDashboard() {
         if (!window.confirm("Are you sure you want to delete this event?")) return;
         try {
             await deleteEventById(id);
-            setSuccessMsg("Event deleted.");
+            setSuccessMsg("Event removed from system.");
             fetchData();
         } catch (err) {
             setError("Failed to delete event.");
@@ -135,109 +138,110 @@ function AdminDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+        <div className="min-h-screen bg-[#F4F6F9] text-gray-900 flex flex-col font-sans">
             <Navbar activeTab={activeTab} onSelectTab={setActiveTab} />
 
-            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8">
                 {/* Alerts */}
                 {error && (
-                    <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-sm flex items-center justify-between">
+                    <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-700 rounded-r text-red-800 text-sm flex items-center justify-between shadow-sm">
                         <span>{error}</span>
-                        <button onClick={() => setError("")} className="text-rose-400 hover:text-white">✕</button>
+                        <button onClick={() => setError("")} className="font-bold">✕</button>
                     </div>
                 )}
 
                 {successMsg && (
-                    <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-300 text-sm flex items-center justify-between">
+                    <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-700 rounded-r text-green-800 text-sm flex items-center justify-between shadow-sm">
                         <span>{successMsg}</span>
-                        <button onClick={() => setSuccessMsg("")} className="text-emerald-400 hover:text-white">✕</button>
+                        <button onClick={() => setSuccessMsg("")} className="font-bold">✕</button>
                     </div>
                 )}
 
                 {/* OVERVIEW TAB */}
                 {activeTab === "overview" && (
                     <div>
-                        <div className="mb-8">
-                            <h1 className="text-2xl font-bold text-white tracking-tight">
-                                Administration Dashboard
+                        {/* Title Section */}
+                        <div className="mb-8 border-l-4 border-[#6B1D1D] pl-4">
+                            <h1 className="text-2xl sm:text-3xl font-black text-[#6B1D1D] tracking-tight font-serif uppercase">
+                                University Administration Dashboard
                             </h1>
-                            <p className="text-slate-400 text-sm mt-1">
-                                Overview of university student enrollments and campus event metrics.
+                            <p className="text-gray-600 text-sm mt-1 font-medium">
+                                Institutional overview of student enrollments, event governance, and academic activity.
                             </p>
                         </div>
 
                         {/* Stat Cards Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
-                            <div className="bg-gradient-to-br from-indigo-900/40 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 shadow-xl">
-                                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
-                                    Total Registered Students
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                            <div className="bg-white border-t-4 border-t-[#6B1D1D] border border-gray-200 rounded-lg p-6 shadow-sm">
+                                <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                                    Enrolled Students
                                 </span>
-                                <div className="text-4xl font-extrabold text-white mt-2">
+                                <div className="text-4xl font-extrabold text-[#6B1D1D] mt-2 font-serif">
                                     {stats?.totalStudents ?? students.length}
                                 </div>
-                                <p className="text-xs text-slate-400 mt-2">
-                                    Enrolled by Admin
+                                <p className="text-xs text-gray-500 mt-2">
+                                    Registered by Administration
                                 </p>
                             </div>
 
-                            <div className="bg-gradient-to-br from-purple-900/40 to-slate-900 border border-purple-500/30 rounded-2xl p-6 shadow-xl">
-                                <span className="text-xs font-semibold uppercase tracking-wider text-purple-400">
-                                    Total University Events
+                            <div className="bg-white border-t-4 border-t-[#EAA91D] border border-gray-200 rounded-lg p-6 shadow-sm">
+                                <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                                    Total Campus Events
                                 </span>
-                                <div className="text-4xl font-extrabold text-white mt-2">
+                                <div className="text-4xl font-extrabold text-[#6B1D1D] mt-2 font-serif">
                                     {stats?.totalEvents ?? events.length}
                                 </div>
-                                <p className="text-xs text-slate-400 mt-2">
-                                    All campus events
+                                <p className="text-xs text-gray-500 mt-2">
+                                    Symposia, workshops & fairs
                                 </p>
                             </div>
 
-                            <div className="bg-gradient-to-br from-emerald-900/40 to-slate-900 border border-emerald-500/30 rounded-2xl p-6 shadow-xl">
-                                <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
+                            <div className="bg-white border-t-4 border-t-[#6B1D1D] border border-gray-200 rounded-lg p-6 shadow-sm">
+                                <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
                                     Approved Events
                                 </span>
-                                <div className="text-4xl font-extrabold text-white mt-2">
+                                <div className="text-4xl font-extrabold text-[#6B1D1D] mt-2 font-serif">
                                     {stats?.approvedEvents ?? events.filter(e => e.status === "APPROVED").length}
                                 </div>
-                                <p className="text-xs text-slate-400 mt-2">
-                                    Available to students
+                                <p className="text-xs text-gray-500 mt-2">
+                                    Active on Student Portal
                                 </p>
                             </div>
 
-                            <div className="bg-gradient-to-br from-amber-900/40 to-slate-900 border border-amber-500/30 rounded-2xl p-6 shadow-xl">
-                                <span className="text-xs font-semibold uppercase tracking-wider text-amber-400">
+                            <div className="bg-white border-t-4 border-t-[#EAA91D] border border-gray-200 rounded-lg p-6 shadow-sm">
+                                <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
                                     Total Registrations
                                 </span>
-                                <div className="text-4xl font-extrabold text-white mt-2">
+                                <div className="text-4xl font-extrabold text-[#6B1D1D] mt-2 font-serif">
                                     {stats?.totalRegistrations ?? 0}
                                 </div>
-                                <p className="text-xs text-slate-400 mt-2">
-                                    Student ticket bookings
+                                <p className="text-xs text-gray-500 mt-2">
+                                    Student seat allocations
                                 </p>
                             </div>
                         </div>
 
-                        {/* Quick Actions */}
-                        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-                            <h2 className="text-lg font-bold text-white mb-4">
-                                Quick Administrative Actions
+                        {/* Quick Actions Panel */}
+                        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm border-l-4 border-l-[#EAA91D]">
+                            <h2 className="text-lg font-bold text-[#6B1D1D] mb-4 font-serif uppercase tracking-wide">
+                                Administrative Actions
                             </h2>
                             <div className="flex flex-wrap gap-4">
                                 <button
                                     onClick={() => { setActiveTab("students"); setShowStudentModal(true); }}
-                                    className="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/20 text-sm transition flex items-center gap-2"
+                                    className="bg-[#6B1D1D] hover:bg-[#571515] text-white font-bold px-6 py-2.5 rounded shadow-sm text-sm uppercase tracking-wider transition duration-150 flex items-center gap-2"
                                 >
-                                    <span>+ Register New Student</span>
+                                    <span>+ Register Student Account</span>
                                 </button>
                                 <button
                                     onClick={() => { setActiveTab("events"); setShowEventModal(true); }}
-                                    className="bg-purple-600 hover:bg-purple-500 text-white font-medium px-5 py-2.5 rounded-xl shadow-lg shadow-purple-600/20 text-sm transition flex items-center gap-2"
+                                    className="bg-white hover:bg-[#F9F6F0] text-[#6B1D1D] border-2 border-[#6B1D1D] font-bold px-6 py-2.5 rounded shadow-sm text-sm uppercase tracking-wider transition duration-150 flex items-center gap-2"
                                 >
-                                    <span>+ Create Campus Event</span>
+                                    <span>+ Create University Event</span>
                                 </button>
                                 <button
                                     onClick={fetchData}
-                                    className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium px-5 py-2.5 rounded-xl border border-slate-700 text-sm transition"
+                                    className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-5 py-2.5 rounded border border-gray-300 text-sm uppercase tracking-wider transition duration-150"
                                 >
                                     Refresh Metrics
                                 </button>
@@ -249,66 +253,66 @@ function AdminDashboard() {
                 {/* STUDENTS TAB */}
                 {activeTab === "students" && (
                     <div>
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-l-4 border-[#6B1D1D] pl-4">
                             <div>
-                                <h1 className="text-2xl font-bold text-white tracking-tight">
-                                    University Student Directory
+                                <h1 className="text-2xl sm:text-3xl font-black text-[#6B1D1D] tracking-tight font-serif uppercase">
+                                    Student Account Registry
                                 </h1>
-                                <p className="text-slate-400 text-sm mt-1">
-                                    All students are registered by the administration to grant role-based system access.
+                                <p className="text-gray-600 text-sm mt-1 font-medium">
+                                    In accordance with University of Ruhuna policy, all student accounts are registered by FOT Administration.
                                 </p>
                             </div>
                             <button
                                 onClick={() => setShowStudentModal(true)}
-                                className="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 text-sm transition flex items-center justify-center gap-2"
+                                className="bg-[#6B1D1D] hover:bg-[#571515] text-white font-bold px-5 py-2.5 rounded shadow-sm text-sm uppercase tracking-wider transition duration-150"
                             >
-                                <span>+ Register New Student</span>
+                                + Register New Student
                             </button>
                         </div>
 
-                        {/* Students Table */}
-                        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+                        {/* Official Academic Table */}
+                        <div className="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-sm">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left border-collapse">
                                     <thead>
-                                        <tr className="bg-slate-800/80 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-700/60">
-                                            <th className="py-4 px-6">ID</th>
-                                            <th className="py-4 px-6">Student Name</th>
-                                            <th className="py-4 px-6">University Email</th>
-                                            <th className="py-4 px-6">Role</th>
+                                        <tr className="bg-[#6B1D1D] text-white text-xs uppercase tracking-wider">
+                                            <th className="py-4 px-6 border-r border-[#832727]">Reg. ID</th>
+                                            <th className="py-4 px-6 border-r border-[#832727]">Student Full Name</th>
+                                            <th className="py-4 px-6 border-r border-[#832727]">University Email Address</th>
+                                            <th className="py-4 px-6 border-r border-[#832727]">Role</th>
                                             <th className="py-4 px-6 text-right">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-800 text-sm">
+                                    <tbody className="divide-y divide-gray-200 text-sm">
                                         {students.length === 0 ? (
                                             <tr>
-                                                <td colSpan="5" className="py-8 text-center text-slate-500">
-                                                    No students registered yet. Click "Register New Student" to begin.
+                                                <td colSpan="5" className="py-12 text-center text-gray-500 font-medium">
+                                                    No student accounts registered in the database. Click "+ Register New Student" above.
                                                 </td>
                                             </tr>
                                         ) : (
                                             students.map((st) => (
-                                                <tr key={st.id} className="hover:bg-slate-800/40 transition">
-                                                    <td className="py-4 px-6 text-slate-500 font-mono text-xs">
+                                                <tr key={st.id} className="hover:bg-[#F9F6F0] transition duration-150">
+                                                    <td className="py-4 px-6 text-gray-600 font-mono text-xs font-bold">
                                                         #{st.id}
                                                     </td>
-                                                    <td className="py-4 px-6 font-semibold text-white">
+                                                    <td className="py-4 px-6 font-bold text-[#6B1D1D]">
                                                         {st.name}
                                                     </td>
-                                                    <td className="py-4 px-6 text-indigo-400">
+                                                    <td className="py-4 px-6 text-gray-800">
                                                         {st.email}
                                                     </td>
                                                     <td className="py-4 px-6">
-                                                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                                                        <span className="px-3 py-1 rounded text-xs font-bold uppercase tracking-wider bg-green-100 text-green-800 border border-green-300">
                                                             STUDENT
                                                         </span>
                                                     </td>
                                                     <td className="py-4 px-6 text-right">
                                                         <button
                                                             onClick={() => handleDeleteStudent(st.id, st.name)}
-                                                            className="text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 px-3 py-1.5 rounded-lg text-xs transition"
+                                                            className="text-red-700 hover:text-white bg-red-50 hover:bg-red-700 border border-red-300 px-3 py-1 rounded text-xs font-bold uppercase tracking-wider transition"
                                                         >
-                                                            Delete
+                                                            Remove
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -324,26 +328,26 @@ function AdminDashboard() {
                 {/* EVENTS TAB */}
                 {activeTab === "events" && (
                     <div>
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-l-4 border-[#6B1D1D] pl-4">
                             <div>
-                                <h1 className="text-2xl font-bold text-white tracking-tight">
-                                    University Events & Approvals
+                                <h1 className="text-2xl sm:text-3xl font-black text-[#6B1D1D] tracking-tight font-serif uppercase">
+                                    University Event Governance
                                 </h1>
-                                <p className="text-slate-400 text-sm mt-1">
-                                    Manage events, approve pending submissions, or create new campus activities.
+                                <p className="text-gray-600 text-sm mt-1 font-medium">
+                                    Manage, approve, or create events for the Faculty of Technology (FOT) campus.
                                 </p>
                             </div>
                             <button
                                 onClick={() => setShowEventModal(true)}
-                                className="bg-purple-600 hover:bg-purple-500 text-white font-medium px-5 py-2.5 rounded-xl shadow-lg shadow-purple-600/30 text-sm transition flex items-center justify-center gap-2"
+                                className="bg-[#6B1D1D] hover:bg-[#571515] text-white font-bold px-5 py-2.5 rounded shadow-sm text-sm uppercase tracking-wider transition duration-150"
                             >
-                                <span>+ Create Campus Event</span>
+                                + Create University Event
                             </button>
                         </div>
 
                         {events.length === 0 ? (
-                            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-12 text-center text-slate-500">
-                                No events found in the university database.
+                            <div className="bg-white border border-gray-300 rounded-lg p-12 text-center text-gray-500 font-medium">
+                                No university events recorded in the database.
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -364,54 +368,54 @@ function AdminDashboard() {
 
             {/* REGISTER STUDENT MODAL */}
             {showStudentModal && (
-                <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold text-white">
-                                Register New University Student
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white border-t-8 border-t-[#6B1D1D] border-b-4 border-b-[#EAA91D] rounded-xl max-w-md w-full p-6 shadow-2xl">
+                        <div className="flex items-center justify-between mb-4 border-b pb-3">
+                            <h3 className="text-lg font-black text-[#6B1D1D] font-serif uppercase tracking-wide">
+                                Register New Student Account
                             </h3>
                             <button
                                 onClick={() => setShowStudentModal(false)}
-                                className="text-slate-400 hover:text-white"
+                                className="text-gray-400 hover:text-gray-700 font-bold"
                             >
                                 ✕
                             </button>
                         </div>
-                        <p className="text-xs text-slate-400 mb-6">
-                            Admin registration ensures that only officially verified students can log into the event system.
+                        <p className="text-xs text-gray-600 mb-6 leading-relaxed">
+                            Account registration by University Administration is mandatory for all students to access the event reservation portal.
                         </p>
 
                         <form onSubmit={handleRegisterStudent} className="space-y-4">
                             <div>
-                                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
                                     Student Full Name
                                 </label>
                                 <input
                                     type="text"
                                     required
-                                    placeholder="e.g. Alex Johnson"
+                                    placeholder="e.g. Kasun Perera"
                                     value={studentName}
                                     onChange={(e) => setStudentName(e.target.value)}
-                                    className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
+                                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded px-4 py-2.5 text-sm outline-none focus:border-[#6B1D1D]"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
-                                    University Email
+                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                                    University Email Address
                                 </label>
                                 <input
                                     type="email"
                                     required
-                                    placeholder="e.g. alex@fot.edu"
+                                    placeholder="e.g. kasun@fot.edu or student@ruh.ac.lk"
                                     value={studentEmail}
                                     onChange={(e) => setStudentEmail(e.target.value)}
-                                    className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
+                                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded px-4 py-2.5 text-sm outline-none focus:border-[#6B1D1D]"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
                                     Initial Password
                                 </label>
                                 <input
@@ -419,22 +423,22 @@ function AdminDashboard() {
                                     required
                                     value={studentPassword}
                                     onChange={(e) => setStudentPassword(e.target.value)}
-                                    className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:border-indigo-500 font-mono"
+                                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded px-4 py-2.5 text-sm outline-none focus:border-[#6B1D1D] font-mono font-semibold"
                                 />
                             </div>
 
-                            <div className="pt-4 flex justify-end gap-3">
+                            <div className="pt-4 flex justify-end gap-3 border-t">
                                 <button
                                     type="button"
                                     onClick={() => setShowStudentModal(false)}
-                                    className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-sm"
+                                    className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold uppercase tracking-wider text-xs"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={registering}
-                                    className="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium shadow-md shadow-indigo-600/30"
+                                    className="px-5 py-2 rounded bg-[#6B1D1D] hover:bg-[#571515] text-white font-bold uppercase tracking-wider text-xs shadow-sm"
                                 >
                                     {registering ? "Registering..." : "Register Student"}
                                 </button>
@@ -446,15 +450,15 @@ function AdminDashboard() {
 
             {/* CREATE EVENT MODAL */}
             {showEventModal && (
-                <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold text-white">
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white border-t-8 border-t-[#6B1D1D] border-b-4 border-b-[#EAA91D] rounded-xl max-w-md w-full p-6 shadow-2xl">
+                        <div className="flex items-center justify-between mb-4 border-b pb-3">
+                            <h3 className="text-lg font-black text-[#6B1D1D] font-serif uppercase tracking-wide">
                                 Create University Event
                             </h3>
                             <button
                                 onClick={() => setShowEventModal(false)}
-                                className="text-slate-400 hover:text-white"
+                                className="text-gray-400 hover:text-gray-700 font-bold"
                             >
                                 ✕
                             </button>
@@ -462,50 +466,50 @@ function AdminDashboard() {
 
                         <form onSubmit={handleCreateEvent} className="space-y-4">
                             <div>
-                                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
                                     Event Title
                                 </label>
                                 <input
                                     type="text"
                                     required
-                                    placeholder="e.g. FOT AI Symposium"
+                                    placeholder="e.g. FOT Annual AI Symposium 2026"
                                     value={eventTitle}
                                     onChange={(e) => setEventTitle(e.target.value)}
-                                    className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2 text-sm outline-none focus:border-purple-500"
+                                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded px-4 py-2 text-sm outline-none focus:border-[#6B1D1D]"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
                                     Description
                                 </label>
                                 <textarea
                                     required
                                     rows="3"
-                                    placeholder="Event description and details..."
+                                    placeholder="Academic details and guest speaker information..."
                                     value={eventDesc}
                                     onChange={(e) => setEventDesc(e.target.value)}
-                                    className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2 text-sm outline-none focus:border-purple-500"
+                                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded px-4 py-2 text-sm outline-none focus:border-[#6B1D1D]"
                                 ></textarea>
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
-                                        Location
+                                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                                        Campus Location
                                     </label>
                                     <input
                                         type="text"
                                         required
-                                        placeholder="e.g. Auditorium"
+                                        placeholder="e.g. Main Auditorium"
                                         value={eventLocation}
                                         onChange={(e) => setEventLocation(e.target.value)}
-                                        className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm outline-none focus:border-purple-500"
+                                        className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded px-3 py-2 text-sm outline-none focus:border-[#6B1D1D]"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
                                         Max Capacity
                                     </label>
                                     <input
@@ -514,13 +518,13 @@ function AdminDashboard() {
                                         min="1"
                                         value={eventCapacity}
                                         onChange={(e) => setEventCapacity(e.target.value)}
-                                        className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm outline-none focus:border-purple-500"
+                                        className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded px-3 py-2 text-sm outline-none focus:border-[#6B1D1D]"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
                                     Event Date & Time
                                 </label>
                                 <input
@@ -528,22 +532,35 @@ function AdminDashboard() {
                                     required
                                     value={eventDate}
                                     onChange={(e) => setEventDate(e.target.value)}
-                                    className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm outline-none focus:border-purple-500"
+                                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded px-3 py-2 text-sm outline-none focus:border-[#6B1D1D]"
                                 />
                             </div>
 
-                            <div className="pt-4 flex justify-end gap-3">
+                            <div>
+                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                                    Event Cover Image URL (Optional)
+                                </label>
+                                <input
+                                    type="url"
+                                    placeholder="https://upload.wikimedia.org/..."
+                                    value={eventImageUrl}
+                                    onChange={(e) => setEventImageUrl(e.target.value)}
+                                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded px-3 py-2 text-sm outline-none focus:border-[#6B1D1D]"
+                                />
+                            </div>
+
+                            <div className="pt-4 flex justify-end gap-3 border-t">
                                 <button
                                     type="button"
                                     onClick={() => setShowEventModal(false)}
-                                    className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-sm"
+                                    className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold uppercase tracking-wider text-xs"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={creatingEvent}
-                                    className="px-5 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium shadow-md shadow-purple-600/30"
+                                    className="px-5 py-2 rounded bg-[#6B1D1D] hover:bg-[#571515] text-white font-bold uppercase tracking-wider text-xs shadow-sm"
                                 >
                                     {creatingEvent ? "Creating..." : "Create Event"}
                                 </button>
@@ -552,6 +569,13 @@ function AdminDashboard() {
                     </div>
                 </div>
             )}
+
+            {/* Institutional Footer */}
+            <footer className="bg-[#4C1414] text-white text-xs py-4 px-6 border-t border-[#EAA91D]/40 text-center mt-12">
+                <p className="font-medium">
+                    © 2026 University of Ruhuna, Sri Lanka — Faculty of Technology (FOT). Administrative Control Panel.
+                </p>
+            </footer>
         </div>
     );
 }

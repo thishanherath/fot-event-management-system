@@ -29,6 +29,7 @@ public class EventService {
         event.setLocation(request.getLocation());
         event.setEventDate(request.getEventDate());
         event.setCapacity(request.getCapacity());
+        event.setImageUrl(request.getImageUrl());
         if (user.getRole() == com.ictec.eventmanagementsytem.entity.Role.ADMIN) {
             event.setStatus(EventStatus.APPROVED);
         } else {

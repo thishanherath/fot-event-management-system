@@ -69,97 +69,105 @@ function EventCard({
     };
 
     return (
-        <div className="bg-slate-800/60 border border-slate-700/60 hover:border-indigo-500/50 rounded-xl p-5 shadow-lg backdrop-blur-sm transition duration-200 flex flex-col justify-between">
+        <div className="bg-white border border-gray-200 hover:border-[#EAA91D] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between border-t-4 border-t-[#6B1D1D]">
             <div>
-                {/* Header info */}
-                <div className="flex items-start justify-between gap-3 mb-3">
-                    <h3 className="text-lg font-bold text-white tracking-tight leading-snug">
-                        {event.title}
-                    </h3>
+                {/* Event Photo Banner */}
+                <div className="relative h-44 w-full mb-4 overflow-hidden bg-[#4C1414]">
+                    <img
+                        src={
+                            event.imageUrl ||
+                            "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Lecture_hall_of_the_University_of_Helsinki.jpg/800px-Lecture_hall_of_the_University_of_Helsinki.jpg"
+                        }
+                        alt={event.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                            e.target.style.display = "none";
+                        }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                     <span
-                        className={`px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider flex-shrink-0 ${
+                        className={`absolute bottom-2 right-2 px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-wider shadow ${
                             event.status === "APPROVED"
-                                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                                ? "bg-green-600 text-white"
                                 : event.status === "PENDING_APPROVAL"
-                                ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                                : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                                ? "bg-[#EAA91D] text-[#4C1414]"
+                                : "bg-red-600 text-white"
                         }`}
                     >
                         {event.status?.replace("_", " ")}
                     </span>
                 </div>
 
+                {/* Header Info */}
+                <div className="px-6">
+                    <h3 className="text-lg font-bold text-[#6B1D1D] tracking-tight leading-snug font-serif mb-2">
+                        {event.title}
+                    </h3>
+
                 {/* Description */}
-                <p className="text-sm text-slate-300 mb-4 line-clamp-2">
-                    {event.description || "No detailed description provided for this university event."}
+                <p className="text-sm text-gray-700 mb-4 line-clamp-3 leading-relaxed">
+                    {event.description || "Official academic event organized under the FOT university curriculum."}
                 </p>
 
                 {/* Details */}
-                <div className="space-y-2 mb-4 text-xs text-slate-400">
-                    <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4 text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <span className="text-slate-300 font-medium">{formattedDate}</span>
+                <div className="space-y-2 mb-5 text-xs text-gray-600 bg-gray-50 p-3 rounded border border-gray-200">
+                    <div className="flex items-center gap-2 font-medium">
+                        <span className="text-[#EAA91D] font-bold text-sm">🗓</span>
+                        <span className="text-gray-800 font-semibold">{formattedDate}</span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4 text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span className="text-slate-300">{event.location || "TBA"}</span>
+                    <div className="flex items-center gap-2 font-medium">
+                        <span className="text-[#EAA91D] font-bold text-sm">📍</span>
+                        <span className="text-gray-700">{event.location || "TBA"}</span>
                     </div>
                 </div>
 
                 {/* Capacity Progress Bar */}
-                <div className="mb-4">
-                    <div className="flex justify-between text-xs mb-1">
-                        <span className="text-slate-400">
-                            Registered Participants
+                <div className="mb-5">
+                    <div className="flex justify-between text-xs mb-1 font-semibold">
+                        <span className="text-gray-600">
+                            Student Registrations
                         </span>
-                        <span className="font-semibold text-slate-200">
-                            {registrationsCount} / {capacity}
+                        <span className="text-[#6B1D1D]">
+                            {registrationsCount} / {capacity} Enrolled
                         </span>
                     </div>
-                    <div className="w-full bg-slate-700/80 rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden border border-gray-300">
                         <div
-                            className={`h-2 rounded-full transition-all duration-300 ${
-                                isFull ? "bg-rose-500" : percentage > 80 ? "bg-amber-500" : "bg-indigo-500"
+                            className={`h-2.5 rounded-full transition-all duration-300 ${
+                                isFull ? "bg-red-600" : percentage > 80 ? "bg-[#EAA91D]" : "bg-[#6B1D1D]"
                             }`}
                             style={{ width: `${percentage}%` }}
                         ></div>
                     </div>
                 </div>
+                </div>
             </div>
 
             {/* Footer Action Buttons */}
-            <div className="pt-3 border-t border-slate-700/60 flex items-center justify-between gap-2">
+            <div className="px-6 pb-6 pt-4 border-t border-gray-200 flex items-center justify-between gap-3">
                 {/* Student View */}
                 {userRole === "STUDENT" && (
                     <>
                         {isRegistered ? (
                             <div className="w-full flex items-center justify-between gap-2">
-                                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-2 rounded-lg">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Registered
+                                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-green-800 bg-green-100 border border-green-300 px-3 py-2 rounded">
+                                    <span>✓ Registered</span>
                                 </span>
                                 {onCancelRegistration && (
                                     <button
                                         onClick={handleCancelClick}
                                         disabled={actionLoading}
-                                        className="text-xs px-3 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 transition"
+                                        className="text-xs px-3 py-2 rounded bg-red-50 hover:bg-red-100 text-red-700 border border-red-300 font-semibold transition"
                                     >
-                                        {actionLoading ? "..." : "Cancel"}
+                                        {actionLoading ? "..." : "Cancel Seat"}
                                     </button>
                                 )}
                             </div>
                         ) : isFull ? (
                             <button
                                 disabled
-                                className="w-full bg-slate-700 text-slate-400 font-medium py-2 rounded-lg text-xs cursor-not-allowed"
+                                className="w-full bg-gray-200 text-gray-500 font-bold uppercase tracking-wider py-2.5 rounded text-xs cursor-not-allowed border border-gray-300"
                             >
                                 Event Full
                             </button>
@@ -167,9 +175,9 @@ function EventCard({
                             <button
                                 onClick={handleRegisterClick}
                                 disabled={actionLoading || event.status !== "APPROVED"}
-                                className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-600 text-white font-medium py-2 px-4 rounded-lg text-xs shadow-md shadow-indigo-600/20 transition disabled:opacity-50"
+                                className="w-full bg-[#6B1D1D] hover:bg-[#571515] text-white font-bold uppercase tracking-wider py-2.5 px-4 rounded text-xs shadow-sm hover:shadow transition duration-150 disabled:opacity-50"
                             >
-                                {actionLoading ? "Registering..." : "Register for Event"}
+                                {actionLoading ? "Enrolling..." : "Register for Event"}
                             </button>
                         )}
                     </>
@@ -182,7 +190,7 @@ function EventCard({
                             <button
                                 onClick={handleApproveClick}
                                 disabled={actionLoading}
-                                className="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-3 py-1.5 rounded-lg transition"
+                                className="text-xs bg-green-700 hover:bg-green-800 text-white font-bold uppercase tracking-wider px-4 py-2 rounded transition shadow-sm"
                             >
                                 Approve
                             </button>
@@ -191,7 +199,7 @@ function EventCard({
                             <button
                                 onClick={handleDeleteClick}
                                 disabled={actionLoading}
-                                className="text-xs bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 font-medium px-3 py-1.5 rounded-lg transition"
+                                className="text-xs bg-white hover:bg-red-700 text-red-700 hover:text-white border border-red-700 font-bold uppercase tracking-wider px-4 py-2 rounded transition"
                             >
                                 Delete
                             </button>

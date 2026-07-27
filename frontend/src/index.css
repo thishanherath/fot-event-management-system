@@ -1,1 +1,121 @@
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    --ruhuna-maroon: #6B1D1D;
+    --ruhuna-maroon-dark: #571515;
+    --ruhuna-maroon-light: #832727;
+    --ruhuna-gold: #EAA91D;
+    --ruhuna-gold-dark: #C88D10;
+    --ruhuna-gold-light: #F3BF46;
+    --academic-bg: #F4F6F9;
+    --academic-card: #FFFFFF;
+  }
+
+  body {
+    background-color: var(--academic-bg);
+    color: #1F2421;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Custom Scrollbar for formal academic look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #E5E7EB;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6B1D1D;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #571515;
+}
+
+/* Production-Level Keyframe Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(234, 169, 29, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(234, 169, 29, 0.7);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.bg-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Helper styles for Ruhuna color accents */
+.bg-maroon {
+  background-color: #6B1D1D;
+}
+.bg-maroon-dark {
+  background-color: #571515;
+}
+.text-maroon {
+  color: #6B1D1D;
+}
+.border-maroon {
+  border-color: #6B1D1D;
+}
+.bg-gold {
+  background-color: #EAA91D;
+}
+.text-gold {
+  color: #EAA91D;
+}
+.border-gold {
+  border-color: #EAA91D;
+}

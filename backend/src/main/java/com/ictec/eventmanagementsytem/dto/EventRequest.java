@@ -12,4 +12,5 @@ public class EventRequest {
     private String location;
     private LocalDateTime eventDate;
     private Integer capacity;
+    private String imageUrl;
 }
