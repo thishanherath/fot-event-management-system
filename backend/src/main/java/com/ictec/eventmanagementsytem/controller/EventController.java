@@ -18,7 +18,7 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
 
-    @PreAuthorize("hasRole('ORGANIZER')")
+    @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN')")
     @PostMapping
     public Event createEvent(@RequestBody EventRequest request, Authentication authentication) {
         return eventService.createEvent(request, authentication.getName());
@@ -47,7 +47,7 @@ public class EventController {
         return eventService.approveEvent(id);
     }
 
-    @PreAuthorize("hasRole('ORGANIZER')")
+    @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN')")
     @PutMapping("/{id}")
     public Event updateEvent(@PathVariable Long id, @RequestBody EventRequest request, Authentication authentication) {
         return eventService.updateEvent(id, request, authentication.getName());

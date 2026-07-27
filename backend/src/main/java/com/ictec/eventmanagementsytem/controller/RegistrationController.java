@@ -38,5 +38,10 @@ public class RegistrationController {
         return registrationService.getEventParticipants(eventId);
     }
 
+    @DeleteMapping("/{id}")
+    public String cancelRegistration(@PathVariable Long id, Authentication authentication) {
+        registrationService.cancelRegistration(id, authentication.getName());
+        return "Registration cancelled successfully";
+    }
 
 }

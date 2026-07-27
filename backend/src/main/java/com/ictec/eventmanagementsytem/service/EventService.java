@@ -29,8 +29,11 @@ public class EventService {
         event.setLocation(request.getLocation());
         event.setEventDate(request.getEventDate());
         event.setCapacity(request.getCapacity());
-        // New events need admin approval
-        event.setStatus(EventStatus.PENDING_APPROVAL);
+        if (user.getRole() == com.ictec.eventmanagementsytem.entity.Role.ADMIN) {
+            event.setStatus(EventStatus.APPROVED);
+        } else {
+            event.setStatus(EventStatus.PENDING_APPROVAL);
+        }
         event.setCreatedBy(user);
         return eventRepository.save(event);
     }
@@ -68,8 +71,9 @@ public class EventService {
 
     public Event updateEvent(Long eventId, EventRequest request, String email) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!event.getCreatedBy().getEmail().equals(email)) {
+        if (!event.getCreatedBy().getEmail().equals(email) && user.getRole() != com.ictec.eventmanagementsytem.entity.Role.ADMIN) {
             throw new RuntimeException(
                     "You can only update your own events"
             );
@@ -93,11 +97,13 @@ public class EventService {
         long totalEvents = eventRepository.count();
         long approvedEvents = eventRepository.countByStatus(EventStatus.APPROVED);
         long totalRegistrations = registrationRepository.count();
+        long totalStudents = userRepository.countByRole(com.ictec.eventmanagementsytem.entity.Role.STUDENT);
 
         return new DashboardStats(
                 totalEvents,
                 approvedEvents,
-                totalRegistrations
+                totalRegistrations,
+                totalStudents
         );
 
     }

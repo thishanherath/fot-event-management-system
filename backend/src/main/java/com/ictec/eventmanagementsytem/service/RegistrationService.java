@@ -68,4 +68,18 @@ public class RegistrationService {
         return registrationRepository.findByEventId(eventId);
     }
 
+    public void cancelRegistration(Long registrationId, String email) {
+        Registration registration = registrationRepository.findById(registrationId)
+                .orElseThrow(() -> new RuntimeException("Registration not found"));
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!registration.getStudent().getEmail().equals(email) && user.getRole() != Role.ADMIN) {
+            throw new RuntimeException("You can only cancel your own registrations");
+        }
+
+        registrationRepository.delete(registration);
+    }
+
 }
