@@ -43,8 +43,14 @@ public class EventService {
         return eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Event not found"));
     }
 
-    public void deleteEventById(Long id) {
+    public void deleteEventById(Long id, String email) {
         Event event = getEventById(id);
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        if (!event.getCreatedBy().getEmail().equals(email) && user.getRole() != com.ictec.eventmanagementsytem.entity.Role.ADMIN) {
+            throw new RuntimeException(
+                    "You can only delete your own events"
+            );
+        }
         eventRepository.delete(event);
     }
 

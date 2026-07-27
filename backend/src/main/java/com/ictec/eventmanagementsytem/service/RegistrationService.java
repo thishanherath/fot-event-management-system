@@ -37,7 +37,7 @@ public class RegistrationService {
             );
         }
 
-        long currentRegistrations = registrationRepository.findByEventId(eventId).size();
+        long currentRegistrations = registrationRepository.countByEventId(eventId);
 
         if (currentRegistrations >= event.getCapacity()) {
             throw new RuntimeException(

@@ -34,10 +34,10 @@ public class EventController {
         return eventService.getEventById(id);
     }
 
-    @PreAuthorize("hasRole('ORGANIZER')")
+    @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public String deleteEventById(@PathVariable long id) {
-        eventService.deleteEventById(id);
+    public String deleteEventById(@PathVariable long id, Authentication authentication) {
+        eventService.deleteEventById(id, authentication.getName());
         return "Event deleted successfully";
     }
 
