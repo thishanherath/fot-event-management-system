@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import ImageCarousel from "../components/ImageCarousel";
 import { getAllEvents } from "../services/eventService";
 import { useAuth } from "../context/AuthContext";
 
@@ -128,62 +129,7 @@ function Home() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("ALL");
 
-    // Carousel Active Slide State
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
-
-    // Real-Time Countdown Timer state for Featured Event Spotlight
-    const [timeLeft, setTimeLeft] = useState({
-        days: 14,
-        hours: 8,
-        minutes: 42,
-        seconds: 15
-    });
-
-    // Auto-Play Timer for Image Carousel (advances every 5 seconds unless paused by mouse hover)
-    useEffect(() => {
-        if (isPaused) return;
-        const slideTimer = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
-        }, 5000);
-        return () => clearInterval(slideTimer);
-    }, [isPaused]);
-
-    const nextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
-    };
-
-    const prevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length);
-    };
-
-    // Live countdown interval
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setTimeLeft((prev) => {
-                let { days, hours, minutes, seconds } = prev;
-                if (seconds > 0) {
-                    seconds--;
-                } else {
-                    seconds = 59;
-                    if (minutes > 0) {
-                        minutes--;
-                    } else {
-                        minutes = 59;
-                        if (hours > 0) {
-                            hours--;
-                        } else {
-                            hours = 23;
-                            if (days > 0) days--;
-                        }
-                    }
-                }
-                return { days, hours, minutes, seconds };
-            });
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, []);
+    // ImageCarousel now handles its own state for slides and auto-play.
 
     useEffect(() => {
         const fetchPublicEvents = async () => {
@@ -238,211 +184,13 @@ function Home() {
         return matchesSearch;
     });
 
-    const activeSlideData = CAROUSEL_SLIDES[currentSlide];
+    // removed activeSlideData
 
     return (
         <div className="min-h-screen bg-[#F4F6F9] text-gray-900 flex flex-col font-sans overflow-x-hidden">
             <Navbar />
 
-            {/* PRODUCTION-LEVEL ANIMATED HERO SECTION WITH IMAGE CAROUSEL */}
-            <section
-                className="relative bg-[#4C1414] text-white border-b-4 border-[#EAA91D] min-h-[640px] flex items-center overflow-hidden shadow-2xl"
-                onMouseEnter={() => setIsPaused(true)}
-                onMouseLeave={() => setIsPaused(false)}
-            >
-                {/* CAROUSEL BACKGROUND IMAGES WITH SMOOTH CROSS-FADE ANIMATION */}
-                {CAROUSEL_SLIDES.map((slide, idx) => (
-                    <div
-                        key={slide.id}
-                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                            idx === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
-                        }`}
-                    >
-                        {/* High-Res Background Image */}
-                        <img
-                            src={slide.image}
-                            alt={slide.title}
-                            className="w-full h-full object-cover object-center transform scale-105 transition-transform duration-10000"
-                            onError={(e) => {
-                                e.target.style.display = "none";
-                            }}
-                        />
-                        {/* Elegant Dark Gradient Overlays for Academic Contrast */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#4C1414]/95 via-[#571515]/85 to-black/60"></div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#4C1414] via-transparent to-black/40"></div>
-                    </div>
-                ))}
-
-                {/* ANIMATED FLOATING DECORATIVE GLOWS */}
-                <div className="absolute -top-32 -left-32 w-96 h-96 bg-[#EAA91D]/15 rounded-full blur-3xl pointer-events-none animate-float z-20"></div>
-                <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-red-600/20 rounded-full blur-3xl pointer-events-none animate-float z-20" style={{ animationDelay: "2s" }}></div>
-
-                {/* MAIN CAROUSEL CONTENT & LIVE SPOTLIGHT GRID */}
-                <div className="max-w-7xl w-full mx-auto px-4 sm:px-8 py-16 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-30">
-                    {/* Left Carousel Text Content */}
-                    <div className="lg:col-span-7 space-y-6 animate-fade-in" key={`slide-text-${currentSlide}`}>
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-[#EAA91D]/60 text-[#EAA91D] font-extrabold text-xs uppercase tracking-wider shadow-sm">
-                            <span className="w-2 h-2 rounded-full bg-[#EAA91D]"></span>
-                            <span>{activeSlideData.badge}</span>
-                        </div>
-
-                        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight font-serif uppercase leading-tight">
-                            {activeSlideData.title}
-                        </h1>
-
-                        <p className="text-gray-200 text-base sm:text-lg leading-relaxed font-medium max-w-2xl">
-                            {activeSlideData.subtitle}
-                        </p>
-
-                        <div className="flex flex-wrap items-center gap-4 pt-2">
-                            <button
-                                onClick={handlePortalNavigation}
-                                className="bg-[#EAA91D] hover:bg-[#d49615] text-[#4C1414] font-black px-8 py-4 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transform transition duration-300 uppercase tracking-wider text-sm flex items-center gap-2 animate-pulse-glow"
-                            >
-                                <span>{isAuthenticated ? "Enter My Academic Portal →" : activeSlideData.ctaText}</span>
-                            </button>
-                            <a
-                                href="#events"
-                                className="bg-white/10 hover:bg-white/20 text-white border-2 border-white/40 hover:border-[#EAA91D] font-bold px-7 py-4 rounded-xl text-sm uppercase tracking-wider transition duration-200 backdrop-blur-sm"
-                            >
-                                Explore Live Catalog ↓
-                            </a>
-                        </div>
-
-                        {/* Quick Interactive Highlights Bar */}
-                        <div className="pt-6 border-t border-white/15 grid grid-cols-3 gap-4 max-w-lg">
-                            <div>
-                                <div className="text-2xl font-black text-[#EAA91D] font-serif">{events.length || 4}+</div>
-                                <div className="text-xs text-gray-300 font-semibold uppercase">Active Events</div>
-                            </div>
-                            <div>
-                                <div className="text-2xl font-black text-[#EAA91D] font-serif">100%</div>
-                                <div className="text-xs text-gray-300 font-semibold uppercase">Verified Access</div>
-                            </div>
-                            <div>
-                                <div className="text-2xl font-black text-[#EAA91D] font-serif">Live</div>
-                                <div className="text-xs text-gray-300 font-semibold uppercase">Seat Allocation</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Right Featured Event Spotlight with LIVE COUNTDOWN TIMER */}
-                    <div className="lg:col-span-5 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-                        <div className="bg-white/95 backdrop-blur-md text-gray-900 rounded-2xl p-6 shadow-2xl border-2 border-[#EAA91D] relative overflow-hidden group hover:shadow-3xl transition duration-300">
-                            {/* Decorative Header */}
-                            <div className="flex items-center justify-between border-b border-gray-200 pb-3 mb-4">
-                                <div className="flex items-center gap-2">
-                                    <span className="px-2.5 py-1 rounded bg-[#6B1D1D] text-[#EAA91D] text-xs font-black uppercase tracking-wider">
-                                        ★ LIVE COUNTDOWN
-                                    </span>
-                                </div>
-                                <span className="text-xs font-bold text-gray-500 font-mono">
-                                    2026 ACADEMIC YEAR
-                                </span>
-                            </div>
-
-                            <h3 className="text-xl font-black text-[#6B1D1D] font-serif leading-snug mb-2">
-                                University of Ruhuna - FOT Annual Research Symposium 2026
-                            </h3>
-                            <p className="text-xs text-gray-600 mb-5 leading-relaxed">
-                                Join leading engineering technologists, ICT researchers, and guest speakers for Southern Sri Lanka's premier university research symposium.
-                            </p>
-
-                            {/* LIVE COUNTDOWN TIMER */}
-                            <div className="bg-[#4C1414] text-white rounded-xl p-4 mb-5 border border-[#EAA91D]/40">
-                                <div className="text-xs font-bold text-[#EAA91D] uppercase tracking-wider text-center mb-2">
-                                    Keynote Session Starts In:
-                                </div>
-                                <div className="grid grid-cols-4 gap-2 text-center">
-                                    <div className="bg-black/30 rounded-lg py-2">
-                                        <div className="text-2xl font-black font-mono text-[#EAA91D]">
-                                            {String(timeLeft.days).padStart(2, "0")}
-                                        </div>
-                                        <div className="text-[10px] text-gray-300 uppercase font-semibold">Days</div>
-                                    </div>
-                                    <div className="bg-black/30 rounded-lg py-2">
-                                        <div className="text-2xl font-black font-mono text-[#EAA91D]">
-                                            {String(timeLeft.hours).padStart(2, "0")}
-                                        </div>
-                                        <div className="text-[10px] text-gray-300 uppercase font-semibold">Hours</div>
-                                    </div>
-                                    <div className="bg-black/30 rounded-lg py-2">
-                                        <div className="text-2xl font-black font-mono text-[#EAA91D]">
-                                            {String(timeLeft.minutes).padStart(2, "0")}
-                                        </div>
-                                        <div className="text-[10px] text-gray-300 uppercase font-semibold">Mins</div>
-                                    </div>
-                                    <div className="bg-black/30 rounded-lg py-2">
-                                        <div className="text-2xl font-black font-mono text-[#EAA91D]">
-                                            {String(timeLeft.seconds).padStart(2, "0")}
-                                        </div>
-                                        <div className="text-[10px] text-gray-300 uppercase font-semibold">Secs</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Live Capacity Gauge */}
-                            <div className="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200">
-                                <div className="flex justify-between text-xs font-bold mb-1">
-                                    <span className="text-gray-700">Undergraduate Enrolled Seats</span>
-                                    <span className="text-[#6B1D1D]">165 / 200 Allocated (82%)</span>
-                                </div>
-                                <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                                    <div className="bg-[#6B1D1D] h-2.5 rounded-full" style={{ width: "82%" }}></div>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={handlePortalNavigation}
-                                className="w-full bg-[#6B1D1D] hover:bg-[#571515] text-white font-black py-3 px-4 rounded-lg uppercase tracking-wider text-xs shadow-md hover:shadow-lg transition duration-200 flex items-center justify-center gap-2"
-                            >
-                                <span>Reserve My Undergraduate Seat →</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* CAROUSEL CONTROLS & SLIDE INDICATORS */}
-                <div className="absolute bottom-6 left-0 right-0 z-40 max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between">
-                    {/* Slide Indicators (Clickable Pills) */}
-                    <div className="flex items-center gap-3">
-                        {CAROUSEL_SLIDES.map((slide, idx) => (
-                            <button
-                                key={slide.id}
-                                onClick={() => setCurrentSlide(idx)}
-                                aria-label={`Go to slide ${idx + 1}`}
-                                className={`h-3 rounded-full transition-all duration-300 ${
-                                    idx === currentSlide
-                                        ? "w-10 bg-[#EAA91D] shadow-md"
-                                        : "w-3 bg-white/40 hover:bg-white/70"
-                                }`}
-                            ></button>
-                        ))}
-                    </div>
-
-                    {/* Manual Previous / Next Arrow Buttons */}
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={prevSlide}
-                            aria-label="Previous Slide"
-                            className="w-10 h-10 rounded-full bg-black/40 hover:bg-[#6B1D1D] text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition duration-200 shadow-md hover:scale-110"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
-                            </svg>
-                        </button>
-                        <button
-                            onClick={nextSlide}
-                            aria-label="Next Slide"
-                            className="w-10 h-10 rounded-full bg-black/40 hover:bg-[#6B1D1D] text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition duration-200 shadow-md hover:scale-110"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </section>
+            <ImageCarousel />
 
             {/* PROFESSIONAL FOT ACADEMIC DEPARTMENTS WITH HIGH-RES PHOTOGRAPHIC CARDS */}
             <section className="max-w-7xl mx-auto px-4 sm:px-8 py-16">

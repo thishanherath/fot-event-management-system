@@ -1,9 +1,10 @@
 import { useAuth } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 function Navbar({ activeTab, onSelectTab }) {
     const { user, role, isAuthenticated, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogout = () => {
         logout();
@@ -11,226 +12,144 @@ function Navbar({ activeTab, onSelectTab }) {
     };
 
     const handleDashboardClick = () => {
-        if (role === "ADMIN") {
-            navigate("/admin");
-        } else if (role === "STUDENT") {
-            navigate("/student");
-        } else if (role === "ORGANIZER") {
-            navigate("/organizer");
-        } else {
-            navigate("/login");
-        }
+        if (role === "ADMIN") navigate("/admin");
+        else if (role === "STUDENT") navigate("/student");
+        else if (role === "ORGANIZER") navigate("/organizer");
+        else navigate("/login");
     };
 
+    const isHome = location.pathname === "/";
+
     return (
-        <header className="sticky top-0 z-50 shadow-md">
-            {/* Main Institutional Navigation Header */}
-            <div className="bg-white border-b-4 border-[#EAA91D] px-4 sm:px-8">
-                <div className="max-w-7xl mx-auto flex items-center justify-between h-20">
-                    {/* University Crest Logo & Titles */}
-                    <Link to="/" className="flex items-center gap-4 group cursor-pointer">
-                        {/* Clean University Logo Display */}
-                        <div className="flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition">
-                            <img
-                                src="/logo.png"
-                                alt="Faculty of Technology Logo"
-                                className="h-14 sm:h-16 w-auto object-contain drop-shadow-md"
-                                onError={(e) => {
-                                    e.target.style.display = "none";
-                                    e.target.nextSibling.style.display = "flex";
-                                }}
-                            />
-                            {/* Fallback emblem if logo file is missing */}
-                            <div className="hidden w-12 h-14 bg-gradient-to-b from-[#7A1E1E] to-[#5A1414] rounded-b-full border-2 border-[#EAA91D] flex-col items-center justify-center p-1 shadow-md">
-                                <svg className="w-6 h-6 text-[#EAA91D]" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-                                    <path d="M12 5.5A2.5 2.5 0 009.5 8H11a1 1 0 012 0h1.5A2.5 2.5 0 0012 5.5zM12 11c-1.38 0-2.5 1.12-2.5 2.5V17h5v-3.5C14.5 12.12 13.38 11 12 11z" />
-                                </svg>
-                            </div>
+        <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]">
+            <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between h-[72px]">
+                    
+                    {/* Left: Logo & Title */}
+                    <Link to="/" className="flex items-center gap-3 group cursor-pointer shrink-0">
+                        {/* Logo Image */}
+                        <img
+                            src="/logo.png"
+                            alt="University Logo"
+                            className="h-[50px] w-auto object-contain"
+                            onError={(e) => {
+                                e.target.style.display = "none";
+                                e.target.nextSibling.style.display = "flex";
+                            }}
+                        />
+                        {/* Fallback */}
+                        <div className="hidden h-12 w-12 bg-[#8b1515] rounded-full items-center justify-center p-1">
+                            <span className="text-white text-xl font-bold">UoR</span>
                         </div>
-                        <div>
-                            <h1 className="text-xl sm:text-2xl font-black text-[#6B1D1D] tracking-tight leading-none font-serif group-hover:text-[#571515] transition">
-                                UNIVERSITY OF RUHUNA
+                        {/* Title Text (styled like the image) */}
+                        <div className="flex flex-col justify-center ml-1">
+                            <h1 className="text-[17px] sm:text-[19px] font-bold text-[#800000] tracking-tight leading-tight font-sans">
+                                University of Ruhuna
                             </h1>
-                            <p className="text-xs sm:text-sm font-semibold text-gray-700 tracking-wide mt-1">
-                                Faculty of Technology (FOT) — Event Management System
+                            <p className="text-[10px] sm:text-[11px] text-gray-500 font-sans tracking-wide mt-0.5">
+                                FACULTY OF TECHNOLOGY — EVENT SYSTEM
                             </p>
                         </div>
                     </Link>
 
-                    {/* Navigation Tabs (when inside a dashboard) */}
-                    {onSelectTab && (
-                        <nav className="hidden lg:flex items-center space-x-1">
-                            {role === "ADMIN" && (
-                                <>
-                                    <button
-                                        onClick={() => onSelectTab("overview")}
-                                        className={`px-4 py-2 font-semibold text-sm transition border-b-2 ${
-                                            activeTab === "overview"
-                                                ? "text-[#6B1D1D] border-[#6B1D1D] bg-[#F9F6F0]"
-                                                : "text-gray-600 border-transparent hover:text-[#6B1D1D] hover:bg-gray-50"
-                                        }`}
-                                    >
-                                        Admin Dashboard
-                                    </button>
-                                    <button
-                                        onClick={() => onSelectTab("students")}
-                                        className={`px-4 py-2 font-semibold text-sm transition border-b-2 ${
-                                            activeTab === "students"
-                                                ? "text-[#6B1D1D] border-[#6B1D1D] bg-[#F9F6F0]"
-                                                : "text-gray-600 border-transparent hover:text-[#6B1D1D] hover:bg-gray-50"
-                                        }`}
-                                    >
-                                        Student Registry
-                                    </button>
-                                    <button
-                                        onClick={() => onSelectTab("events")}
-                                        className={`px-4 py-2 font-semibold text-sm transition border-b-2 ${
-                                            activeTab === "events"
-                                                ? "text-[#6B1D1D] border-[#6B1D1D] bg-[#F9F6F0]"
-                                                : "text-gray-600 border-transparent hover:text-[#6B1D1D] hover:bg-gray-50"
-                                        }`}
-                                    >
-                                        Event Governance
-                                    </button>
-                                </>
-                            )}
+                    {/* Right: Navigation Links */}
+                    <div className="hidden lg:flex items-center h-full space-x-1 pl-4 font-sans">
+                        
+                        {/* Always show Home */}
+                        <NavItem 
+                            label="Home" 
+                            isActive={isHome && !onSelectTab} 
+                            to="/" 
+                        />
 
-                            {role === "STUDENT" && (
-                                <>
-                                    <button
-                                        onClick={() => onSelectTab("available")}
-                                        className={`px-4 py-2 font-semibold text-sm transition border-b-2 ${
-                                            activeTab === "available"
-                                                ? "text-[#6B1D1D] border-[#6B1D1D] bg-[#F9F6F0]"
-                                                : "text-gray-600 border-transparent hover:text-[#6B1D1D] hover:bg-gray-50"
-                                        }`}
-                                    >
-                                        Available Campus Events
-                                    </button>
-                                    <button
-                                        onClick={() => onSelectTab("my-registrations")}
-                                        className={`px-4 py-2 font-semibold text-sm transition border-b-2 ${
-                                            activeTab === "my-registrations"
-                                                ? "text-[#6B1D1D] border-[#6B1D1D] bg-[#F9F6F0]"
-                                                : "text-gray-600 border-transparent hover:text-[#6B1D1D] hover:bg-gray-50"
-                                        }`}
-                                    >
-                                        My Registrations
-                                    </button>
-                                </>
-                            )}
-                        </nav>
-                    )}
-
-                    {/* Right Action Section */}
-                    <div className="flex items-center gap-4">
-                        {isAuthenticated ? (
+                        {/* Render Dashboard Tabs if onSelectTab is provided */}
+                        {onSelectTab ? (
                             <>
-                                <div className="hidden sm:flex items-center gap-3 border-r border-gray-200 pr-4">
-                                    <div className="text-right">
-                                        <p className="text-sm font-bold text-[#6B1D1D] leading-tight">
-                                            {user?.name || user?.email || "Academic User"}
-                                        </p>
-                                        <p className="text-xs text-gray-500 font-medium">
-                                            {user?.email}
-                                        </p>
-                                    </div>
-                                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm ${
-                                        role === "ADMIN"
-                                            ? "bg-[#6B1D1D] text-white border border-[#EAA91D]"
-                                            : "bg-[#EAA91D] text-[#4C1414] font-extrabold"
-                                    }`}>
-                                        {role || "USER"}
-                                    </span>
-                                </div>
-
-                                {!onSelectTab && (
-                                    <button
-                                        onClick={handleDashboardClick}
-                                        className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded font-bold text-sm bg-[#6B1D1D] hover:bg-[#571515] text-white transition duration-200 shadow-sm"
-                                    >
-                                        <span>My Portal →</span>
-                                    </button>
+                                {role === "ADMIN" && (
+                                    <>
+                                        <NavItem label="Overview" isActive={activeTab === "overview"} onClick={() => onSelectTab("overview")} />
+                                        <NavItem label="Students" isActive={activeTab === "students"} onClick={() => onSelectTab("students")} hasDropdown />
+                                        <NavItem label="Events" isActive={activeTab === "events"} onClick={() => onSelectTab("events")} hasDropdown />
+                                    </>
                                 )}
-
-                                <button
-                                    onClick={handleLogout}
-                                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded font-semibold text-sm bg-white hover:bg-[#6B1D1D] text-[#6B1D1D] hover:text-white border border-[#6B1D1D] transition duration-200 shadow-sm"
-                                    title="Sign Out of University Portal"
-                                >
-                                    <span>Sign Out</span>
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                    </svg>
-                                </button>
+                                {role === "STUDENT" && (
+                                    <>
+                                        <NavItem label="Available Events" isActive={activeTab === "available"} onClick={() => onSelectTab("available")} hasDropdown />
+                                        <NavItem label="My Registrations" isActive={activeTab === "my-registrations"} onClick={() => onSelectTab("my-registrations")} />
+                                    </>
+                                )}
+                                {role === "ORGANIZER" && (
+                                    <>
+                                        <NavItem label="My Events" isActive={activeTab === "my-events"} onClick={() => onSelectTab("my-events")} hasDropdown />
+                                        <NavItem label="Attendees" isActive={activeTab === "attendees"} onClick={() => onSelectTab("attendees")} />
+                                    </>
+                                )}
                             </>
                         ) : (
-                            <div className="flex items-center gap-3">
+                            /* Global Navigation when not in dashboard (mimicking the image layout but with EMS context) */
+                            <>
+                                <NavItem label="Dashboard" onClick={handleDashboardClick} hasDropdown />
+                                <NavItem label="Events" onClick={() => navigate("/login")} hasDropdown />
+                                <NavItem label="Faculties" hasDropdown />
+                                <NavItem label="Students" hasDropdown />
+                                <NavItem label="Staff" hasDropdown />
+                                <NavItem label="Research" hasDropdown />
+                            </>
+                        )}
+
+                        {/* Login/Logout */}
+                        <div className="h-full flex items-center ml-2 pl-4">
+                            {isAuthenticated ? (
+                                <button
+                                    onClick={handleLogout}
+                                    className="flex items-center gap-1.5 text-[15px] text-gray-800 hover:text-[#800000] transition-colors"
+                                    title={`Logged in as ${user?.name || role}`}
+                                >
+                                    <span>Logout</span>
+                                </button>
+                            ) : (
                                 <Link
                                     to="/login"
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded font-bold text-sm bg-[#6B1D1D] hover:bg-[#571515] text-white transition duration-200 shadow-md uppercase tracking-wider"
+                                    className="flex items-center gap-1.5 text-[15px] text-gray-800 hover:text-[#800000] transition-colors"
                                 >
-                                    <span>Academic Login</span>
-                                    <svg className="w-4 h-4 text-[#EAA91D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                    </svg>
+                                    <span>Login</span>
                                 </Link>
-                            </div>
-                        )}
+                            )}
+                        </div>
+
+                        {/* Search Icon */}
+                        <button className="flex items-center justify-center w-10 h-full text-gray-600 hover:text-[#800000] transition-colors ml-2">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    {/* Mobile Menu Toggle (Visible on small screens) */}
+                    <div className="lg:hidden flex items-center">
+                        <button className="text-gray-600 hover:text-[#800000] p-2">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
 
             {/* Mobile Navigation Tabs for small screens */}
             {onSelectTab && (
-                <div className="lg:hidden bg-gray-100 border-b border-gray-200 px-4 py-2 flex gap-2 overflow-x-auto">
+                <div className="lg:hidden bg-gray-50 border-t border-gray-200 px-4 py-2 flex gap-2 overflow-x-auto">
                     {role === "ADMIN" && (
                         <>
-                            <button
-                                onClick={() => onSelectTab("overview")}
-                                className={`px-3 py-1 rounded text-xs font-semibold ${
-                                    activeTab === "overview" ? "bg-[#6B1D1D] text-white" : "bg-white text-gray-700"
-                                }`}
-                            >
-                                Overview
-                            </button>
-                            <button
-                                onClick={() => onSelectTab("students")}
-                                className={`px-3 py-1 rounded text-xs font-semibold ${
-                                    activeTab === "students" ? "bg-[#6B1D1D] text-white" : "bg-white text-gray-700"
-                                }`}
-                            >
-                                Student Registry
-                            </button>
-                            <button
-                                onClick={() => onSelectTab("events")}
-                                className={`px-3 py-1 rounded text-xs font-semibold ${
-                                    activeTab === "events" ? "bg-[#6B1D1D] text-white" : "bg-white text-gray-700"
-                                }`}
-                            >
-                                Events
-                            </button>
+                            <button onClick={() => onSelectTab("overview")} className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap ${activeTab === "overview" ? "bg-[#800000] text-white" : "bg-white border text-gray-700"}`}>Overview</button>
+                            <button onClick={() => onSelectTab("students")} className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap ${activeTab === "students" ? "bg-[#800000] text-white" : "bg-white border text-gray-700"}`}>Students</button>
+                            <button onClick={() => onSelectTab("events")} className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap ${activeTab === "events" ? "bg-[#800000] text-white" : "bg-white border text-gray-700"}`}>Events</button>
                         </>
                     )}
                     {role === "STUDENT" && (
                         <>
-                            <button
-                                onClick={() => onSelectTab("available")}
-                                className={`px-3 py-1 rounded text-xs font-semibold ${
-                                    activeTab === "available" ? "bg-[#6B1D1D] text-white" : "bg-white text-gray-700"
-                                }`}
-                            >
-                                Available Events
-                            </button>
-                            <button
-                                onClick={() => onSelectTab("my-registrations")}
-                                className={`px-3 py-1 rounded text-xs font-semibold ${
-                                    activeTab === "my-registrations" ? "bg-[#6B1D1D] text-white" : "bg-white text-gray-700"
-                                }`}
-                            >
-                                My Registrations
-                            </button>
+                            <button onClick={() => onSelectTab("available")} className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap ${activeTab === "available" ? "bg-[#800000] text-white" : "bg-white border text-gray-700"}`}>Available Events</button>
+                            <button onClick={() => onSelectTab("my-registrations")} className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap ${activeTab === "my-registrations" ? "bg-[#800000] text-white" : "bg-white border text-gray-700"}`}>My Registrations</button>
                         </>
                     )}
                 </div>
@@ -239,4 +158,44 @@ function Navbar({ activeTab, onSelectTab }) {
     );
 }
 
+// Reusable Navigation Item Component
+function NavItem({ label, isActive, onClick, hasDropdown, to }) {
+    const content = (
+        <>
+            {label}
+            {hasDropdown && (
+                <svg className="w-3.5 h-3.5 ml-1.5 text-gray-500 group-hover:text-[#800000]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            )}
+        </>
+    );
+
+    const baseClasses = `relative flex items-center h-full px-4 text-[15px] font-medium transition-colors group cursor-pointer ${
+        isActive ? "text-[#800000]" : "text-gray-800 hover:text-[#800000]"
+    }`;
+
+    // The thick red bar at the bottom for active items (matches the image)
+    const activeIndicator = isActive && (
+        <div className="absolute bottom-0 left-0 right-0 h-[4px] bg-[#800000]" />
+    );
+
+    if (to) {
+        return (
+            <Link to={to} className={baseClasses}>
+                {content}
+                {activeIndicator}
+            </Link>
+        );
+    }
+
+    return (
+        <button onClick={onClick} className={baseClasses}>
+            {content}
+            {activeIndicator}
+        </button>
+    );
+}
+
 export default Navbar;
+
